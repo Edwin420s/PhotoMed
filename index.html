@@ -3,12 +3,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>PhotoMed | Request Tracker – Full Functional App</title>
-  <!-- Google Fonts: Inter -->
+  <title>PhotoMed Request Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
-  <!-- Material Symbols -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-  <!-- Tailwind CSS (with forms plugin) -->
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <script>
     tailwind.config = {
@@ -86,7 +83,6 @@
 </header>
 
 <main class="flex-grow w-full max-w-7xl mx-auto px-container_padding_mobile md:px-container_padding_desktop py-stack_lg">
-  <!-- Page Title & Persistence Notification -->
   <div class="mb-stack_lg flex flex-col md:flex-row md:items-end justify-between gap-4">
     <div>
       <h1 class="font-headline-xl text-headline-xl text-on-surface mb-1">Request Tracker</h1>
@@ -98,18 +94,14 @@
     </div>
   </div>
 
-  <!-- DYNAMIC STAT CARDS (Updated via JS) -->
   <section id="statsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack_lg">
-    <!-- filled by JavaScript -->
   </section>
 
-  <!-- Main Content: Form + List -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
-    <!-- Left Column: Submit New Request Form -->
     <aside class="lg:col-span-4 sticky top-24">
       <div class="bg-surface-container-lowest p-stack_lg rounded-xl border border-outline-variant soft-diffuse-shadow">
-        <h2 class="font-headline-md text-headline-md text-on-surface mb-stack_md flex items-center gap-2">
-          <span class="material-symbols-outlined text-primary">add_box</span> Submit New Request
+        <h2 class="font-headline-md text-headline-md text-on-surface mb-stack_md">
+          Submit New Request
         </h2>
         <form id="requestForm" class="space-y-stack_md">
           <div class="space-y-1">
@@ -149,9 +141,7 @@
       </div>
     </aside>
 
-    <!-- Right Column: Manage Requests (Filter + List) -->
     <section class="lg:col-span-8 flex flex-col gap-stack_md">
-      <!-- Search and Filter Bar -->
       <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant flex flex-col md:flex-row gap-stack_md items-center justify-between">
         <div class="relative w-full md:w-96">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
@@ -165,16 +155,13 @@
         </div>
       </div>
 
-      <!-- Request List Container (dynamic) -->
       <div id="requestsListContainer" class="space-y-stack_md">
-        <!-- JS will populate here -->
         <div class="text-center py-10 text-on-surface-variant">Loading requests...</div>
       </div>
     </section>
   </div>
 </main>
 
-<!-- Footer (reference style) -->
 <footer class="bg-surface-container-low border-t border-outline-variant py-stack_lg px-container_padding_desktop w-full mt-auto">
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
     <div class="flex flex-col items-center md:items-start">
@@ -189,7 +176,6 @@
   </div>
 </footer>
 
-<!-- Edit Modal (hidden by default) -->
 <div id="editModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 hidden transition-all">
   <div class="bg-surface-container-lowest rounded-2xl w-full max-w-lg p-6 shadow-2xl border border-outline-variant mx-4">
     <h3 class="font-headline-md text-headline-md text-on-surface mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-primary">edit_note</span> Edit Request</h3>
@@ -215,7 +201,7 @@
 </div>
 
 <script>
-  // ---------- DATA MODEL ----------
+  // Data Model
   let requests = [];
   const STORAGE_KEY = "photomed_requests";
 
@@ -223,7 +209,7 @@
   let currentStatusFilter = "All";
   let currentSearchTerm = "";
 
-  // Helper: format date
+  // Format date
   function formatDate(dateString) {
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return "Invalid Date";
@@ -241,7 +227,7 @@
     if (stored) {
       requests = JSON.parse(stored);
     } else {
-      // Seed with realistic example requests (based on reference design)
+      // Seed with realistic example requests
       const now = new Date();
       requests = [
         {
@@ -255,7 +241,7 @@
           createdAt: new Date(now.getTime() - 3 * 86400000).toISOString()
         },
         {
-          id: 1003, name: "Mark Zuck (Test)", email: "mark@meta.com", company: "PhotoMed", type: "Partnership",
+          id: 1003, name: "James Kariuki", email: "j.kariuki@clinic.co.ke", company: "PhotoMed", type: "Partnership",
           priority: "Low", message: "Inquiry regarding integrating PhotoMed's diagnostic engine into upcoming health-tracking wearables platform.", status: "Resolved",
           createdAt: new Date(now.getTime() - 7 * 86400000).toISOString()
         },
@@ -269,7 +255,7 @@
     }
   }
 
-  // Update Stats Cards (Total, New, In Review, Resolved)
+  // Update Stats Cards
   function renderStats() {
     const total = requests.length;
     const newCount = requests.filter(r => r.status === "New").length;
@@ -300,7 +286,7 @@
     document.getElementById("statsContainer").innerHTML = statsHtml;
   }
 
-  // Get filtered requests based on status + search term
+  // Get filtered requests
   function getFilteredRequests() {
     let filtered = [...requests];
     if (currentStatusFilter !== "All") {
@@ -310,7 +296,6 @@
       const term = currentSearchTerm.trim().toLowerCase();
       filtered = filtered.filter(r => r.name.toLowerCase().includes(term) || r.email.toLowerCase().includes(term));
     }
-    // Sort by newest first
     filtered.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     return filtered;
   }
@@ -324,7 +309,7 @@
     }
   }
 
-  // Update request status (used by status dropdown)
+  // Update request status
   function updateRequestStatus(id, newStatus) {
     const req = requests.find(r => r.id === id);
     if (req) {
@@ -334,7 +319,7 @@
     }
   }
 
-  // Open edit modal with prefill
+  // Open edit modal
   function openEditModal(id) {
     const req = requests.find(r => r.id === id);
     if (!req) return;
@@ -371,7 +356,7 @@
     }
   }
 
-  // Render request list dynamically with full actions (edit, delete, status select)
+  // Render request list
   function renderRequestsList() {
     const filtered = getFilteredRequests();
     const container = document.getElementById("requestsListContainer");
@@ -381,7 +366,6 @@
     }
 
     const cardsHtml = filtered.map(req => {
-      // Determine border color based on status
       let borderClass = "border-l-primary";
       let statusBadgeColor = "bg-primary-container text-on-primary-container";
       if (req.status === "In Review") { borderClass = "border-l-tertiary"; statusBadgeColor = "bg-tertiary-container/20 text-tertiary"; }
@@ -428,7 +412,7 @@
     }).join("");
     container.innerHTML = cardsHtml;
 
-    // attach dynamic event listeners
+    // Attach dynamic event listeners
     document.querySelectorAll(".status-select").forEach(select => {
       select.addEventListener("change", (e) => {
         const reqId = parseInt(select.dataset.id);
@@ -449,13 +433,13 @@
     });
   }
 
-  // Full UI refresh: stats + filtered list
+  // Full UI refresh
   function fullRefreshUI() {
     renderStats();
     renderRequestsList();
   }
 
-  // Add new request from form
+  // Add new request
   function addNewRequest(event) {
     event.preventDefault();
     const name = document.getElementById("reqName").value.trim();
@@ -465,7 +449,15 @@
     const priority = document.getElementById("reqPriority").value;
     const message = document.getElementById("reqMessage").value.trim();
     if (!name || !email || !message) {
-      alert("Please fill in Name, Email and Message.");
+      const form = document.getElementById("requestForm");
+      let errorMsg = document.getElementById("formError");
+      if (!errorMsg) {
+        errorMsg = document.createElement("div");
+        errorMsg.id = "formError";
+        errorMsg.className = "bg-error-container text-on-error-container px-4 py-2 rounded-lg mb-4 text-sm";
+        form.insertBefore(errorMsg, form.firstChild);
+      }
+      errorMsg.textContent = "Please fill in Name, Email and Message.";
       return;
     }
     const newRequest = {
@@ -474,17 +466,18 @@
       status: "New",
       createdAt: new Date().toISOString()
     };
-    requests.unshift(newRequest);  // newest on top visual after refresh
+    requests.unshift(newRequest);
     persistRequests();
     fullRefreshUI();
     document.getElementById("requestForm").reset();
-    // optional: scroll to list
+    const errorMsg = document.getElementById("formError");
+    if (errorMsg) errorMsg.remove();
   }
 
   // Helper: escape HTML
   function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m === '&') return '&amp;'; if(m === '<') return '&lt;'; if(m === '>') return '&gt;'; return m;}); }
 
-  // Sync search inputs (global & filter bar)
+  // Setup event listeners
   function setupEventListeners() {
     const searchInput = document.getElementById("searchInput");
     const globalSearch = document.getElementById("globalSearchInput");
@@ -508,7 +501,6 @@
       fullRefreshUI();
     });
     document.getElementById("requestForm").addEventListener("submit", addNewRequest);
-    // modal close handlers
     document.getElementById("closeModalBtn").addEventListener("click", () => document.getElementById("editModal").classList.add("hidden"));
     document.getElementById("editModal").addEventListener("click", (e) => { if(e.target === document.getElementById("editModal")) document.getElementById("editModal").classList.add("hidden"); });
     document.getElementById("editForm").addEventListener("submit", handleEditSubmit);
